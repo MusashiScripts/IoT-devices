@@ -1,8 +1,9 @@
+import App from "@/components/App";
 
 export default function Home() {
   return (
     <>
-      <h1 className="text-center">Incializacion</h1>
+      <App />
     </>
   );
 }
