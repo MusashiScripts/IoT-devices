@@ -9,7 +9,7 @@ import { Button } from './ui/button'
 import { useState } from 'react'
 import { ScheduleDialog } from './ScheduleDialog'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 import { Spinner } from './ui/spinner'
 
 interface DeviceCardProps {
