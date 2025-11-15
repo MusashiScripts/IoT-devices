@@ -61,6 +61,74 @@ export type Database = {
           },
         ]
       }
+      schedules: {
+        Row: {
+          action: string
+          created_at: string
+          device_id: string
+          enabled: boolean
+          schedule_id: string
+          time: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          device_id: string
+          enabled?: boolean
+          schedule_id?: string
+          time?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          device_id?: string
+          enabled?: boolean
+          schedule_id?: string
+          time?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'schedules_device_id_fkey'
+            columns: ['device_id']
+            isOneToOne: false
+            referencedRelation: 'devices'
+            referencedColumns: ['device_id']
+          },
+        ]
+      }
+      schedules_x_days: {
+        Row: {
+          day_id: string
+          id: string
+          schedule_id: string
+        }
+        Insert: {
+          day_id: string
+          id?: string
+          schedule_id: string
+        }
+        Update: {
+          day_id?: string
+          id?: string
+          schedule_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'schedules_x_days_day_id_fkey'
+            columns: ['day_id']
+            isOneToOne: false
+            referencedRelation: 'week_days'
+            referencedColumns: ['day_id']
+          },
+          {
+            foreignKeyName: 'schedules_x_days_schedule_id_fkey'
+            columns: ['schedule_id']
+            isOneToOne: false
+            referencedRelation: 'schedules'
+            referencedColumns: ['schedule_id']
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -82,6 +150,21 @@ export type Database = {
           email?: string
           name?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      week_days: {
+        Row: {
+          day_id: string
+          day_name: string
+        }
+        Insert: {
+          day_id: string
+          day_name: string
+        }
+        Update: {
+          day_id?: string
+          day_name?: string
         }
         Relationships: []
       }
@@ -230,6 +313,8 @@ export const Constants = {
 type DeviceEntity = Database['public']['Tables']['devices']['Row']
 type UserEntity = Database['public']['Tables']['users']['Row']
 
-export type Device = DeviceEntity & {
+export type DeviceWithUser = DeviceEntity & {
   user: UserEntity
 }
+
+export type Device = Omit<DeviceEntity, 'user_id'>
