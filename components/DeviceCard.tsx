@@ -13,8 +13,7 @@ import { useRouter } from 'next/navigation'
 
 interface DeviceCardProps {
   device: Device
-  /* onToggle: (deviceId: string) => void
-  onSchedule: (deviceId: string, schedule: Device['schedule']) => void */
+  /* onSchedule: (deviceId: string, schedule: Device['schedule']) => void */
 }
 
 export function DeviceCard({ device }: DeviceCardProps) {
@@ -45,7 +44,6 @@ export function DeviceCard({ device }: DeviceCardProps) {
 
   const handleDeviceToggle = async (deviceId: string) => {
     //Perfecto, solo falta q sea en tiempo real
-
     const now = new Date()
     const date = new Intl.DateTimeFormat('en-CA').format(now)
     console.log(date) // "2025-11-13"
