@@ -149,17 +149,15 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className='flex flex-col'>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="enabled"
-                checked={enabled}
-                onCheckedChange={handleScheduleToggle}
-                className='cursor-pointer'
-              />
-              <Label htmlFor="enabled">Activar programación</Label>
-            </div>
-
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="enabled"
+              checked={enabled}
+              onCheckedChange={handleScheduleToggle}
+              className='cursor-pointer'
+              disabled={isLoading}
+            />
+            <Label htmlFor="enabled">Activar programación</Label>
             {isLoading && <Spinner />}
           </div>
 
