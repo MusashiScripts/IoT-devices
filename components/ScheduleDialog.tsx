@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from './ui/checkbox'
 import { daysOfWeek } from '@/lib/constants'
 import { createClient } from '@/utils/supabase/client'
+import { Spinner } from './ui/spinner'
 
 interface ScheduleDialogProps {
   open: boolean
@@ -22,6 +23,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
   const [time, setTime] = useState<string | null>('')
   const [action, setAction] = useState('on')
   const [repeat, setRepeat] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
   const supabase = createClient()
 
@@ -114,6 +116,28 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
     onOpenChange(false)
   }
 
+  const handleScheduleToggle = async (value: boolean) => {
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('schedules')
+        .update({ enabled: value })
+        .eq('device_id', device.device_id)
+        .select()
+
+      if (error) return
+
+      if (data) {
+        setEnabled(value)
+      }
+
+    } catch (error) {
+      console.log('Algo fue mal', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -125,13 +149,18 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="enabled"
-              checked={enabled}
-              onCheckedChange={setEnabled}
-            />
-            <Label htmlFor="enabled">Activar programación</Label>
+          <div className='flex flex-col'>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="enabled"
+                checked={enabled}
+                onCheckedChange={handleScheduleToggle}
+                className='cursor-pointer'
+              />
+              <Label htmlFor="enabled">Activar programación</Label>
+            </div>
+
+            {isLoading && <Spinner />}
           </div>
 
           {enabled && (
