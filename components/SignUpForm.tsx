@@ -7,10 +7,10 @@ import { Label } from './ui/label'
 import { Input } from './ui/input'
 import Link from 'next/link'
 import { GoogleSignInButton } from './GoogleSignInButton'
-import { useLogin } from '@/hooks/useLogin'
+import { useSignUp } from '@/hooks/useSignUp'
 
-export function LoginForm() {
-  const { clientError, serverError, handleSubmit, isLoading, showPassword, toggleShowPassword } = useLogin()
+export function SignUpForm() {
+  const { clientError, serverError, isLoading, handleSubmit, showPassword, toggleShowPassword } = useSignUp()
 
   return (
     <Card className="w-full max-w-md bg-white border-none">
@@ -19,14 +19,14 @@ export function LoginForm() {
           <Wifi className='text-blue-600' />
         </div>
         <CardTitle>Sistema de IoT Control</CardTitle>
-        <CardDescription>Inicia sesion para acceder al panel de control</CardDescription>
+        <CardDescription>Create una cuenta para acceder al panel de control</CardDescription>
       </CardHeader>
 
       <CardContent className='space-y-2'>
         <form className='space-y-6' onSubmit={handleSubmit}>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
-            <Input id='email' name='email' placeholder='email@example.com' type='email'
+            <Input id='email' name='email' placeholder='mail@example.com' type='email'
               className='border-none bg-gray-100 ring-gray-400'
             />
             {clientError.email && <div className='text-red-500 flex justify-center items-center gap-2 mt-2'>
@@ -43,12 +43,9 @@ export function LoginForm() {
                 : <EyeClosed size={20} className='cursor-pointer' onClick={toggleShowPassword} />
               }
             </div>
-
             <Input id='password' name='password' placeholder='Ingresa tu contraseña' type={showPassword ? 'text' : 'password'}
               className='border-none bg-gray-100 ring-gray-400'
             />
-
-
             {clientError.password &&
               <div className='text-red-500 flex justify-center items-center gap-2 mt-2'>
                 <TriangleAlert size={18} />
@@ -69,11 +66,13 @@ export function LoginForm() {
               type='submit'
               disabled={isLoading}
               className={`bg-black text-white w-full ${!isLoading && 'cursor-pointer'}`}>
-              {isLoading ? 'Iniciando Sesion...' : 'Inciar Sesion'}
+              {isLoading ? 'Creando Cuenta...' : 'Crear Cuenta'}
             </Button>
+
             <span className='text-xs font-semibold'>O</span>
+
             <GoogleSignInButton>
-              Iniciar sesión con Google
+              Continuar con Google
             </GoogleSignInButton>
           </div>
 
@@ -81,8 +80,8 @@ export function LoginForm() {
         </form>
 
         <div className='flex justify-center items-center gap-1 text-sm'>
-          <span>No tienes cuenta?</span>
-          <Link href='/sign-up' className='underline underline-offset-4 hover:text-blue-500 transition-colors'>Create una</Link>
+          <span>Ya tienes cuenta?</span>
+          <Link href='/sign-in' className='underline underline-offset-4 hover:text-blue-500 transition-colors'>Inicia Sesión</Link>
         </div>
 
       </CardContent>
