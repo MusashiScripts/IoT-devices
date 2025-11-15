@@ -2,7 +2,7 @@ import type { Device } from './types.d.ts'
 
 export const mockDevices: Device[] = [
   {
-    id: '1',
+    device_id: '1',
     name: 'Luz Sala Principal',
     type: 'Luz',
     status: 'online',
