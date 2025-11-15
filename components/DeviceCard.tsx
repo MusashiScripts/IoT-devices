@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { ScheduleDialog } from './ScheduleDialog'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { Spinner } from './ui/spinner'
 
 interface DeviceCardProps {
   device: Device
@@ -17,8 +18,10 @@ interface DeviceCardProps {
 }
 
 export function DeviceCard({ device }: DeviceCardProps) {
+  const [deviceStatus, setDeviceStatus] = useState(device.isOn)
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  //const router = useRouter()
 
   const supabase = createClient()
 
@@ -42,29 +45,39 @@ export function DeviceCard({ device }: DeviceCardProps) {
     setIsScheduleOpen(value)
   }
 
-  const handleDeviceToggle = async (deviceId: string) => {
+  const handleDeviceToggle = async (deviceId: string, value: boolean) => {
     //Perfecto, solo falta q sea en tiempo real
-    const now = new Date()
-    const date = new Intl.DateTimeFormat('en-CA').format(now)
-    console.log(date) // "2025-11-13"
+    setIsLoading(true)
+    try {
+      const now = new Date()
+      const date = new Intl.DateTimeFormat('en-CA').format(now)
+      console.log(date) // "2025-11-13"
 
-    const { data, error } = await supabase
-      .from('devices')
-      .update({ isOn: !device.isOn, lastUpdated: date })
-      .eq('device_id', deviceId)
+      const { data, error } = await supabase
+        .from('devices')
+        .update({ isOn: !device.isOn, lastUpdated: date })
+        .eq('device_id', deviceId)
 
-    if (data) {
-      console.log(data)
+      if (data) {
+        console.log(data)
+        //setDeviceStatus(value)
+      }
+
+      if (error) {
+        console.log(error)
+      }
+    } catch (error) {
+      console.log('error, algo fue mal', error)
+    } finally {
+      setIsLoading(false)
+      setDeviceStatus(value)
     }
 
-    if (error) {
-      console.log(error)
-    }
 
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
     // con el metodo subscirbe al channel, el codigo esta justo debajo comentado
 
-    router.refresh()
+    //router.refresh()
 
   }
 
@@ -104,12 +117,12 @@ export function DeviceCard({ device }: DeviceCardProps) {
         <div className='flex justify-between items-center'>
           <span className='text-sm'>Estado:</span>
           <div className='flex items-center gap-2'>
-            <span className='text-sm text-muted-foreground'>{device.isOn ? 'Encendido' : 'Apagado'}</span>
+            <span className='text-sm text-muted-foreground'>{deviceStatus ? 'Encendido' : 'Apagado'}</span>
             <Switch
               className='cursor-pointer'
-              checked={device.isOn}
-              disabled={device.status === 'offline'}
-              onCheckedChange={() => handleDeviceToggle(device.device_id)}
+              checked={deviceStatus}
+              disabled={device.status === 'offline' || isLoading}
+              onCheckedChange={(value) => handleDeviceToggle(device.device_id, value)}
             />
           </div>
         </div>
@@ -137,6 +150,9 @@ export function DeviceCard({ device }: DeviceCardProps) {
             <span>Programado: {device.schedule.action} a las {device.schedule.time}</span>
           </div>
         )} */}
+
+        {isLoading && <Spinner className='mx-auto w-full' />}
+
       </CardContent>
 
       <CardFooter>
