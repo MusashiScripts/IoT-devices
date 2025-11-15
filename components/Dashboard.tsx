@@ -2,29 +2,37 @@
 import { Wifi, WifiOff, Zap, Activity, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Input } from './ui/input'
-import { mockDevices } from '@/lib/constants'
 import { Badge } from './ui/badge'
 import { DeviceCard } from './DeviceCard'
-import type { Database } from '@/lib/types.d.ts'
 import { createClient } from '@/utils/supabase/server'
 
 export async function Dashboard() {
 
-  const supabase = await createClient<Database>()
+  const supabase = await createClient()
   const { data: devices, error } = await supabase.from('devices')
     .select('device_id ,created_at, name, type, status, isOn,location, powerConsumption, lastUpdated')
   console.log(devices)
+
+  if (error) {
+    console.error(error)
+  }
+
+  const { count: schedulesCount, error: schedulesError } = await supabase
+    .from('schedules')
+    .select('*', { count: 'exact', head: true })
+    .eq('enabled', true)
+
+  if (schedulesError) {
+    console.error(schedulesError)
+  }
+
   /* 
     const handleDeviceToggle = (deviceId: string) => {
       const newDevices = mockDevices.map(device => device.id === deviceId ? { ...device, isOn: !device.isOn, lastUpdated: 'ahora' } : device)
-    }
-  
-    const handleDeviceSchedule = (deviceId: string, schedule: Device['schedule']) => {
-  
     } */
 
   const onlineDevices = devices && devices?.filter(device => device.status === 'online').length
-  const offlineDevices = devices && devices.length - onlineDevices
+  const offlineDevices = devices && onlineDevices && devices.length - onlineDevices
 
   const totalPowerConsumption = devices?.filter(device => device.isOn).reduce((sum, d) => sum + (d.powerConsumption || 0), 0)
 
@@ -33,7 +41,6 @@ export async function Dashboard() {
   //devicesOn.forEach(device => { totalPowerConsumption += device?.powerConsumption ?? 0 })
 
   const activeDevices = devicesOn?.length
-  const scheduledDevices = mockDevices.filter(device => device.schedule?.enabled).length
 
   /* const filteredDevices = mockDevices.filter(({ name, type, location }) =>
     name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -89,7 +96,7 @@ export async function Dashboard() {
           </CardHeader>
 
           <CardContent>
-            <h2 className='text-2xl font-bold'>{scheduledDevices}</h2>
+            <h2 className='text-2xl font-bold'>{schedulesCount}</h2>
             <p className='text-xs text-muted-foreground'>con horarios activos</p>
           </CardContent>
         </Card>
@@ -138,7 +145,7 @@ export async function Dashboard() {
 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {devices?.map(device => (
-              <DeviceCard key={device.device_id} device={device} /* onToggle={handleDeviceToggle} onSchedule={handleDeviceSchedule} */ />
+              <DeviceCard key={device.device_id} device={device} />
             ))}
           </div>
         </div>
