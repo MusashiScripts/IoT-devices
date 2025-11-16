@@ -22,7 +22,7 @@ export async function Header() {
 
           <div className="flex items-center space-x-3">
             {/* <div className="flex size-8 items-center justify-center rounded-full bg-blue-100"> */}
-            <Image src={LogoImg} alt='logo' height={40} width={40} className='rounded-full' />
+            <Image src={LogoImg} alt='logo' height={40} width={40} className='rounded-full' priority />
             {/*  </div> */}
             <div>
               <h1 className="text-lg font-semibold">Sistema IoT Control</h1>
