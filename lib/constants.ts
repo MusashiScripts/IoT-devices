@@ -1,3 +1,4 @@
+import Logo from '@/public/logo-big.jpg'
 //import type { Device } from './types.d.ts'
 
 /* export const mockDevices: Device[] = [
@@ -78,3 +79,5 @@ export const daysOfWeek = [
   { id: 'saturday', label: 'Sábado' },
   { id: 'sunday', label: 'Domingo' },
 ]
+
+export const LogoImg = Logo
