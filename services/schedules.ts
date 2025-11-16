@@ -11,14 +11,14 @@ export const getDeviceSchedule = async (deviceId: string) => {
 
     if (error) {
       console.log(error)
+      return []
     }
 
-    if (data) {
-      return data
-    }
+    return data ?? []
 
   } catch (error) {
     console.error(error)
+    return []
   }
 }
 
