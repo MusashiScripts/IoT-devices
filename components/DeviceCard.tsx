@@ -2,7 +2,7 @@
 
 import type { Device, Schedule } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Clock, Power, Settings, Zap } from 'lucide-react'
+import { Clock, Power, Settings, Trash, Zap } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Switch } from './ui/switch'
 import { Button } from './ui/button'
@@ -11,7 +11,7 @@ import { ScheduleDialog } from './ScheduleDialog'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Spinner } from './ui/spinner'
-import { getDeviceSchedule } from '@/services/schedules'
+import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
 
 interface DeviceCardProps {
   device: Device
@@ -93,6 +93,19 @@ export function DeviceCard({ device }: DeviceCardProps) {
 
   }
 
+  const createHandleDeleteSchedule = (scheduelId: string) => async () => {
+    setIsLoading(true)
+    try {
+      await deleteScheduleById(scheduelId)
+      const newDeviceSchedules = deviceSchedules?.filter(schedule => schedule.schedule_id !== scheduelId)
+      setDeviceSchedules(newDeviceSchedules)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
 
   /* const devices = supabase.channel('custom-update-channel')
     .on(
@@ -159,9 +172,15 @@ export function DeviceCard({ device }: DeviceCardProps) {
         {/* Renederizado de las programaciones */}
         {deviceSchedules && deviceSchedules.length > 0 &&
           deviceSchedules.map(schedule => (
-            <div key={schedule.schedule_id} className='bg-blue-50 text-xs text-blue-700 p-2 rounded flex items-center gap-1 '>
-              <Clock className='size-3' />
-              <span>Programado: {schedule.action} a las {schedule.time}</span>
+            <div key={schedule.schedule_id} className='bg-blue-50 text-xs text-blue-700 px-2 py-0.5 rounded-md flex items-center justify-between'>
+              <div className='flex items-center gap-1'>
+                <Clock className='size-3' />
+                <span>Programado: {schedule.action} a las {schedule.time}</span>
+              </div>
+              <Button variant='link' size='icon' className='cursor-pointer text-blue-700 p-0 hover:text-red-500 transition-colors'
+                onClick={createHandleDeleteSchedule(schedule.schedule_id)} disabled={isLoading}>
+                <Trash />
+              </Button>
             </div>
           ))
         }

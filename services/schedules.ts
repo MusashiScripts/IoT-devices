@@ -1,8 +1,9 @@
 import { createClient } from '@/utils/supabase/client'
 
+const supabase = createClient()
+
 export const getDeviceSchedule = async (deviceId: string) => {
   try {
-    const supabase = createClient()
     const { data, error } = await supabase
       .from('schedules')
       .select()
@@ -18,5 +19,21 @@ export const getDeviceSchedule = async (deviceId: string) => {
 
   } catch (error) {
     console.error(error)
+  }
+}
+
+export const deleteScheduleById = async (scheduleId: string) => {
+  try {
+    const { error } = await supabase
+      .from('schedules')
+      .delete()
+      .eq('schedule_id', scheduleId)
+
+    if (error) {
+      console.log('Error en la eliminacion', error)
+    }
+
+  } catch (error) {
+    console.log(error)
   }
 }
