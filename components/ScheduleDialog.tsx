@@ -1,8 +1,8 @@
-import type { Device } from '@/lib/types'
+import type { Device, Schedule } from '@/lib/types'
 import { Button } from './ui/button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
 import { Label } from './ui/label'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Switch } from './ui/switch'
 import { Input } from './ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
@@ -10,68 +10,68 @@ import { Checkbox } from './ui/checkbox'
 import { daysOfWeek } from '@/lib/constants'
 import { createClient } from '@/utils/supabase/client'
 import { Spinner } from './ui/spinner'
-import { getDeviceSchedule } from '@/services/schedules'
+import { createNewSchedule } from '@/services/schedules'
+//import { getDeviceSchedule } from '@/services/schedules'
 
 interface ScheduleDialogProps {
   open: boolean
   onOpenChange: (value: boolean) => void
   device: Device
+  addNewSchedule: (schedule: Schedule) => void
   /* onSchedule: (deviceId: string, schedule: Device['schedule']) => void */
 }
 
-export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogProps) {
-  const [enabled, setEnabled] = useState(false)
-  const [time, setTime] = useState<string | null>('')
-  const [action, setAction] = useState('on')
+export function ScheduleDialog({ open, onOpenChange, device, addNewSchedule }: ScheduleDialogProps) {
+  const [enabled, setEnabled] = useState(device.isOn || false)
+  const [time, setTime] = useState<string>('')
+  const [action, setAction] = useState<'on' | 'off'>('on')
   const [repeat, setRepeat] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(false)
 
   const supabase = createClient()
 
-  useEffect(() => {
-    if (!device.device_id) return
-
-    const fetchSchedule = async () => {
-      const data = await getDeviceSchedule(device.device_id)
-
-      if (!data || data.length === 0) return
-
-      const schedule = data[0]
-      setEnabled(schedule.enabled)
-      setTime(schedule.time)
-      setAction(schedule.action)
-
-
-      const { data: schedules_x_days, error } = await supabase
-        .from('schedules_x_days')
-        .select(`
-        week_days (
-          day_name
-        )
-      `)
-        .eq('schedule_id', schedule.schedule_id)
-
-      if (error) {
-        console.error(error)
+  /*   useEffect(() => {
+      if (!device.device_id) return
+  
+      const fetchSchedule = async () => {
+        const data = await getDeviceSchedule(device.device_id)
+  
+        if (!data || data.length === 0) return
+  
+        const schedule = data[0]
+        setEnabled(schedule.enabled)
+        setTime(schedule.time)
+        setAction(schedule.action)
+  
+  
+        const { data: schedules_x_days, error } = await supabase
+          .from('schedules_x_days')
+          .select(`
+          week_days (
+            day_name
+          )
+        `)
+          .eq('schedule_id', schedule.schedule_id)
+  
+        if (error) {
+          console.error(error)
+        }
+  
+        if (schedules_x_days) {
+          //console.log(schedules_x_days)
+          //Aqui tiene q hacerse el seteo de repeat
+          const repeatedDays = schedules_x_days.map(schedule => schedule.week_days.day_name)
+          //console.log(repeatedDays)
+  
+          setRepeat(repeatedDays)
+  
+        }
+  
       }
-
-      if (schedules_x_days) {
-        //console.log(schedules_x_days)
-        //Aqui tiene q hacerse el seteo de repeat
-        const repeatedDays = schedules_x_days.map(schedule => schedule.week_days.day_name)
-        console.log(repeatedDays)
-
-        setRepeat(repeatedDays)
-
-      }
-
-    }
-
-    fetchSchedule()
-
-  }, [device.device_id, supabase])
-
-
+  
+      fetchSchedule()
+  
+    }, [device.device_id, supabase]) */
 
   const handleDayToggle = (dayId: string, checked: boolean) => {
     if (checked) {
@@ -81,23 +81,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
     }
   }
 
-  const handleRemove = () => {
-    //onSchedule(device.id, undefined)
-    onOpenChange(false)
-  }
-
-  const handleSave = () => {
-    const schedule = enabled ? {
-      enabled,
-      time,
-      action,
-      repeat,
-    } : undefined
-    //onSchedule(device.id, schedule)
-    onOpenChange(false)
-  }
-
-  //CHECK
+  //CHECK ENABLE SCHEDULE
   const handleScheduleToggle = async (value: boolean) => {
     setIsLoading(true)
     try {
@@ -118,6 +102,60 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleSave = async () => {
+    setIsLoading(true)
+
+    try {
+      //CREANDO EL SCHEDULE
+      const scheduleData = await createNewSchedule({ deviceId: device.device_id, enabled, action, time })
+      /* const { data: scheduleData, error: scheduleError } = await supabase
+        .from('schedules')
+        .insert(
+          {
+            device_id: device.device_id,
+            enabled,
+            action,
+            time
+          },
+        )
+        .select()
+        .single()
+
+      if (scheduleError) {
+        console.log(scheduleError)
+        return
+      } */
+
+      //console.log(scheduleData)
+
+      //INSERTAR LOS DIAS SELECCIONADOS EN SCHEDULES_X_DAYS
+      if (!scheduleData) return
+
+      const { error: daysError } = await supabase
+        .from('schedules_x_days')
+        .insert(
+          repeat.map(dayId => ({
+            schedule_id: scheduleData.schedule_id,
+            day_id: dayId,
+          }))
+        )
+
+      if (daysError) {
+        console.error(daysError)
+        return
+      }
+
+      addNewSchedule(scheduleData)
+      onOpenChange(false)
+
+    } catch (error) {
+      console.error('Problemas al crear el error', error)
+    } finally {
+      setIsLoading(false)
+    }
+
   }
 
   return (
@@ -151,13 +189,14 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
                   id="time"
                   type="time"
                   value={time ? time : ''}
-                  onChange={(e) => setTime(e.target.value)}
+                  onChange={(e) => setTime(`${e.target.value}:00`)}
+                  required
                 />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="action">Acción</Label>
-                <Select value={action} onValueChange={(value: 'on' | 'off') => setAction(value)}>
+                <Select value={action} onValueChange={(value: 'on' | 'off') => setAction(value)} required>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -178,6 +217,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
                         id={day.id}
                         checked={repeat.includes(day.id)}
                         onCheckedChange={(checked) => handleDayToggle(day.id, !!checked)}
+                        required
                       />
                       <Label htmlFor={day.id} className="text-sm">
                         {day.label}
@@ -192,20 +232,15 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
 
 
         <DialogFooter>
-          <div>
-            {enabled && (
-              <Button variant="destructive" onClick={handleRemove}>
-                Eliminar programación
-              </Button>
-            )}
-          </div>
           <div className='space-x-2'>
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancelar
               </Button>
             </DialogClose>
-            <Button onClick={handleSave}>Guardar</Button>
+            <Button disabled={!time || !action || repeat.length === 0} onClick={handleSave}>
+              Guardar
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>
