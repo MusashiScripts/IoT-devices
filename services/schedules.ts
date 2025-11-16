@@ -22,6 +22,41 @@ export const getDeviceSchedule = async (deviceId: string) => {
   }
 }
 
+interface newScheduleParams {
+  deviceId: string
+  enabled: boolean
+  action: 'on' | 'off'
+  time: string
+}
+
+export const createNewSchedule = async ({ deviceId, enabled, action, time }: newScheduleParams) => {
+  try {
+    const { data: scheduleData, error: scheduleError } = await supabase
+      .from('schedules')
+      .insert(
+        {
+          device_id: deviceId,
+          enabled,
+          action,
+          time
+        },
+      )
+      .select()
+      .single()
+
+    if (scheduleError) {
+      console.log(scheduleError)
+      return
+    }
+
+    return scheduleData
+
+  } catch (error) {
+    console.error(error)
+    return
+  }
+}
+
 export const deleteScheduleById = async (scheduleId: string) => {
   try {
     const { error } = await supabase
