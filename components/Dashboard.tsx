@@ -11,7 +11,7 @@ export async function Dashboard() {
   const supabase = await createClient()
   const { data: devices, error } = await supabase.from('devices')
     .select('device_id ,created_at, name, type, status, isOn,location, powerConsumption, lastUpdated')
-  console.log(devices)
+  //console.log(devices)
 
   if (error) {
     console.error(error)

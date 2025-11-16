@@ -1,6 +1,6 @@
-import type { Device } from './types.d.ts'
+//import type { Device } from './types.d.ts'
 
-export const mockDevices: Device[] = [
+/* export const mockDevices: Device[] = [
   {
     device_id: '1',
     name: 'Luz Sala Principal',
@@ -67,7 +67,7 @@ export const mockDevices: Device[] = [
     powerConsumption: 15,
     lastUpdated: '10 min'
   }
-]
+] */
 
 export const daysOfWeek = [
   { id: 'monday', label: 'Lunes' },
