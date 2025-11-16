@@ -10,6 +10,7 @@ import { Checkbox } from './ui/checkbox'
 import { daysOfWeek } from '@/lib/constants'
 import { createClient } from '@/utils/supabase/client'
 import { Spinner } from './ui/spinner'
+import { getDeviceSchedule } from '@/services/schedules'
 
 interface ScheduleDialogProps {
   open: boolean
@@ -27,31 +28,11 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
 
   const supabase = createClient()
 
-  const getDeviceSchedule = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('schedules')
-        .select()
-        .eq('device_id', device.device_id)
-
-      if (error) {
-        console.log(error)
-      }
-
-      if (data) {
-        return data
-      }
-
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     if (!device.device_id) return
 
     const fetchSchedule = async () => {
-      const data = await getDeviceSchedule()
+      const data = await getDeviceSchedule(device.device_id)
 
       if (!data || data.length === 0) return
 
@@ -88,7 +69,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
 
     fetchSchedule()
 
-  }, [device.device_id])
+  }, [device.device_id, supabase])
 
 
 
@@ -158,7 +139,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
               className='cursor-pointer'
               disabled={isLoading}
             />
-            <Label htmlFor="enabled">Activar programación</Label>
+            <Label htmlFor="enabled">{enabled ? 'Desactivar programación' : 'Activar programación'}</Label>
             {isLoading && <Spinner />}
           </div>
 
@@ -212,7 +193,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
 
         <DialogFooter>
           <div>
-            {device.schedule?.enabled && (
+            {enabled && (
               <Button variant="destructive" onClick={handleRemove}>
                 Eliminar programación
               </Button>
