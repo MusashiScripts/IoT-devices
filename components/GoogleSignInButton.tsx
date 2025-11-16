@@ -12,7 +12,9 @@ export const GoogleSignInButton = ({ children }: { children: React.ReactNode }) 
       await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'http://localhost:3000/auth/callback'
+          redirectTo: process.env.NODE_ENV === 'production'
+            ? 'https://iot-devices-three.vercel.app/auth/callback'
+            : 'http:localhost:3000/auth/callback'
         }
       })
     } catch (error) {
