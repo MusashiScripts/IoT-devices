@@ -1,17 +1,14 @@
 'use client'
 
-import type { Device, Schedule } from '@/lib/types'
+import type { Device } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Clock, Power, Settings, Trash, Zap } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Switch } from './ui/switch'
 import { Button } from './ui/button'
-import { useEffect, useState } from 'react'
 import { ScheduleDialog } from './ScheduleDialog'
-import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
 import { Spinner } from './ui/spinner'
-import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
+import { useDevice } from '@/hooks/useDevice'
 
 interface DeviceCardProps {
   device: Device
@@ -19,7 +16,8 @@ interface DeviceCardProps {
 }
 
 export function DeviceCard({ device }: DeviceCardProps) {
-  const [deviceStatus, setDeviceStatus] = useState(device.isOn)
+  const { deviceStatus, deviceSchedules, isLoading, isScheduleOpen, setIsScheduleOpen, getDeviceVariant, handleDeviceToggle, handleOpenChange, createHandleDeleteSchedule } = useDevice(device)
+  /* const [deviceStatus, setDeviceStatus] = useState(device.isOn)
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>()
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,7 +34,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
     fetchSchedule()
 
   }, [device.device_id])
-
+ */
 
   const getDeviceIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -49,7 +47,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
     }
   }
 
-  const getDeviceVariant = (status: string) => {
+  /* const getDeviceVariant = (status: string) => {
     return status === 'offline' ? 'outline' : 'default'
   }
 
@@ -104,7 +102,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
     } finally {
       setIsLoading(false)
     }
-  }
+  } */
 
 
   /* const devices = supabase.channel('custom-update-channel')
