@@ -20,7 +20,7 @@ interface DeviceCardProps {
 
 export function DeviceCard({ device }: DeviceCardProps) {
   const [deviceStatus, setDeviceStatus] = useState(device.isOn)
-  const [deviceSchedule, setDeviceSchedule] = useState<Schedule[]>()
+  const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>()
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -30,8 +30,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
   useEffect(() => {
     const fetchSchedule = async () => {
       const schedule = await getDeviceSchedule(device.device_id)
-      setDeviceSchedule(schedule)
-      console.log(schedule)
+      setDeviceSchedules(schedule)
     }
 
     fetchSchedule()
@@ -126,7 +125,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
         </div>
       </CardHeader>
 
-      <CardContent className='space-y-4'>
+      <CardContent className='space-y-4 flex-1'>
         <div className='flex justify-between items-center'>
           <span className='text-sm'>Estado:</span>
           <div className='flex items-center gap-2'>
@@ -157,12 +156,15 @@ export function DeviceCard({ device }: DeviceCardProps) {
           </div>
         </div>
 
-        {deviceSchedule && deviceSchedule[0].enabled && (
-          <div className='bg-blue-50 text-xs text-blue-700 p-2 rounded flex items-center gap-1 '>
-            <Clock className='size-3' />
-            <span>Programado: {deviceSchedule[0].action} a las {deviceSchedule[0].time}</span>
-          </div>
-        )}
+        {/* Renederizado de las programaciones */}
+        {deviceSchedules && deviceSchedules.length > 0 &&
+          deviceSchedules.map(schedule => (
+            <div key={schedule.schedule_id} className='bg-blue-50 text-xs text-blue-700 p-2 rounded flex items-center gap-1 '>
+              <Clock className='size-3' />
+              <span>Programado: {schedule.action} a las {schedule.time}</span>
+            </div>
+          ))
+        }
 
         {isLoading && <Spinner className='mx-auto w-full' />}
 
