@@ -1,11 +1,11 @@
 import { Dashboard } from '@/components/Dashboard'
 import { Header } from '@/components/Header'
-import { createClient } from '@/utils/supabase/server'
+//import { createClient } from '@/utils/supabase/server'
 
 export default async function Home() {
 
-  const supabase = await createClient()
-  const { data, error } = await supabase.auth.getUser()
+  /*   const supabase = await createClient()
+    const { data, error } = await supabase.auth.getUser() */
 
   return (
     <main>
