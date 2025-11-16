@@ -116,6 +116,7 @@ export function ScheduleDialog({ open, onOpenChange, device }: ScheduleDialogPro
     onOpenChange(false)
   }
 
+  //CHECK
   const handleScheduleToggle = async (value: boolean) => {
     setIsLoading(true)
     try {

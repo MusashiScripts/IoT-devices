@@ -318,3 +318,5 @@ export type DeviceWithUser = DeviceEntity & {
 }
 
 export type Device = Omit<DeviceEntity, 'user_id'>
+
+export type Schedule = Database['public']['Tables']['schedules']['Row']

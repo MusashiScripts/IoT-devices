@@ -1,16 +1,17 @@
 'use client'
 
-import type { Device } from '@/lib/types'
+import type { Device, Schedule } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Clock, Power, Settings, Zap } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Switch } from './ui/switch'
 import { Button } from './ui/button'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ScheduleDialog } from './ScheduleDialog'
 import { createClient } from '@/utils/supabase/client'
-//import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Spinner } from './ui/spinner'
+import { getDeviceSchedule } from '@/services/schedules'
 
 interface DeviceCardProps {
   device: Device
@@ -19,11 +20,23 @@ interface DeviceCardProps {
 
 export function DeviceCard({ device }: DeviceCardProps) {
   const [deviceStatus, setDeviceStatus] = useState(device.isOn)
+  const [deviceSchedule, setDeviceSchedule] = useState<Schedule[]>()
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  //const router = useRouter()
+  const router = useRouter()
 
   const supabase = createClient()
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      const schedule = await getDeviceSchedule(device.device_id)
+      setDeviceSchedule(schedule)
+      console.log(schedule)
+    }
+
+    fetchSchedule()
+
+  }, [device.device_id])
 
 
   const getDeviceIcon = (type: string) => {
@@ -77,7 +90,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
     // con el metodo subscirbe al channel, el codigo esta justo debajo comentado
 
-    //router.refresh()
+    router.refresh()
 
   }
 
@@ -144,20 +157,20 @@ export function DeviceCard({ device }: DeviceCardProps) {
           </div>
         </div>
 
-        {/* {device.schedule?.enabled && (
+        {deviceSchedule && deviceSchedule[0].enabled && (
           <div className='bg-blue-50 text-xs text-blue-700 p-2 rounded flex items-center gap-1 '>
             <Clock className='size-3' />
-            <span>Programado: {device.schedule.action} a las {device.schedule.time}</span>
+            <span>Programado: {deviceSchedule[0].action} a las {deviceSchedule[0].time}</span>
           </div>
-        )} */}
+        )}
 
         {isLoading && <Spinner className='mx-auto w-full' />}
 
       </CardContent>
 
       <CardFooter>
-        <Button variant='outline' size='sm' className='w-full flex items-center justify-center gap-2'
-          disabled={device.status === 'offline'}
+        <Button variant='outline' size='sm' className='w-full flex items-center justify-center gap-2 cursor-pointer'
+          disabled={device.status === 'offline' || isLoading}
           onClick={() => setIsScheduleOpen(true)}
         >
           <Clock className='size-4 ' />
