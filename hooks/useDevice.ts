@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 export const useDevice = (device: Device) => {
   const [deviceStatus, setDeviceStatus] = useState(device.isOn)
-  const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>()
+  const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
@@ -81,5 +81,9 @@ export const useDevice = (device: Device) => {
     }
   }
 
-  return { deviceStatus, deviceSchedules, isLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleDeviceToggle, createHandleDeleteSchedule }
+  const addNewSchedule = (schedule: Schedule) => {
+    setDeviceSchedules([...deviceSchedules, schedule])
+  }
+
+  return { deviceStatus, deviceSchedules, isLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleDeviceToggle, createHandleDeleteSchedule, addNewSchedule }
 }
