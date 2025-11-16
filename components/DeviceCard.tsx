@@ -16,25 +16,7 @@ interface DeviceCardProps {
 }
 
 export function DeviceCard({ device }: DeviceCardProps) {
-  const { deviceStatus, deviceSchedules, isLoading, isScheduleOpen, setIsScheduleOpen, getDeviceVariant, handleDeviceToggle, handleOpenChange, createHandleDeleteSchedule } = useDevice(device)
-  /* const [deviceStatus, setDeviceStatus] = useState(device.isOn)
-  const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>()
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-
-  const supabase = createClient()
-
-  useEffect(() => {
-    const fetchSchedule = async () => {
-      const schedule = await getDeviceSchedule(device.device_id)
-      setDeviceSchedules(schedule)
-    }
-
-    fetchSchedule()
-
-  }, [device.device_id])
- */
+  const { deviceStatus, deviceSchedules, isLoading, isScheduleOpen, setIsScheduleOpen, getDeviceVariant, handleDeviceToggle, handleOpenChange, createHandleDeleteSchedule, addNewSchedule } = useDevice(device)
 
   const getDeviceIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -47,62 +29,6 @@ export function DeviceCard({ device }: DeviceCardProps) {
     }
   }
 
-  /* const getDeviceVariant = (status: string) => {
-    return status === 'offline' ? 'outline' : 'default'
-  }
-
-  const handleOpenChange = (value: boolean) => {
-    setIsScheduleOpen(value)
-  }
-
-  const handleDeviceToggle = async (deviceId: string, value: boolean) => {
-    //Perfecto, solo falta q sea en tiempo real
-    setIsLoading(true)
-    try {
-      const now = new Date()
-      const date = new Intl.DateTimeFormat('en-CA').format(now)
-      console.log(date) // "2025-11-13"
-
-      const { data, error } = await supabase
-        .from('devices')
-        .update({ isOn: !device.isOn, lastUpdated: date })
-        .eq('device_id', deviceId)
-
-      if (data) {
-        console.log(data)
-        //setDeviceStatus(value)
-      }
-
-      if (error) {
-        console.log(error)
-      }
-    } catch (error) {
-      console.log('error, algo fue mal', error)
-    } finally {
-      setIsLoading(false)
-      setDeviceStatus(value)
-    }
-
-
-    //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
-    // con el metodo subscirbe al channel, el codigo esta justo debajo comentado
-
-    router.refresh()
-
-  }
-
-  const createHandleDeleteSchedule = (scheduelId: string) => async () => {
-    setIsLoading(true)
-    try {
-      await deleteScheduleById(scheduelId)
-      const newDeviceSchedules = deviceSchedules?.filter(schedule => schedule.schedule_id !== scheduelId)
-      setDeviceSchedules(newDeviceSchedules)
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  } */
 
 
   /* const devices = supabase.channel('custom-update-channel')
@@ -168,7 +94,7 @@ export function DeviceCard({ device }: DeviceCardProps) {
         </div>
 
         {/* Renederizado de las programaciones */}
-        {deviceSchedules && deviceSchedules.length > 0 &&
+        {deviceSchedules && deviceSchedules.length > 0 ?
           deviceSchedules.map(schedule => (
             <div key={schedule.schedule_id} className='bg-blue-50 text-xs text-blue-700 px-2 py-0.5 rounded-md flex items-center justify-between'>
               <div className='flex items-center gap-1'>
@@ -180,7 +106,13 @@ export function DeviceCard({ device }: DeviceCardProps) {
                 <Trash />
               </Button>
             </div>
-          ))
+          )) : (
+            <div className='flex items-center justify-center'>
+              <Badge className='bg-slate-700'>
+                Sin programaciones
+              </Badge>
+            </div>
+          )
         }
 
         {isLoading && <Spinner className='mx-auto w-full' />}
@@ -201,9 +133,10 @@ export function DeviceCard({ device }: DeviceCardProps) {
         open={isScheduleOpen}
         onOpenChange={handleOpenChange}
         device={device}
+        addNewSchedule={addNewSchedule}
       /* onSchedule={onSchedule} */
       />
 
-    </Card>
+    </Card >
   )
 }
