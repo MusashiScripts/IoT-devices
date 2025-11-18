@@ -38,7 +38,7 @@ export const useDevice = (device: Device) => {
     try {
       const now = new Date()
       const date = new Intl.DateTimeFormat('en-CA').format(now)
-      console.log(date) // "2025-11-13"
+      //console.log(date) --> "2025-11-13"
 
       const { data, error } = await supabase
         .from('devices')
@@ -46,20 +46,20 @@ export const useDevice = (device: Device) => {
         .eq('device_id', deviceId)
 
       if (data) {
-        console.log(data)
+        //console.log(data)
         //setDeviceStatus(value)
       }
 
       if (error) {
         console.log(error)
       }
+
     } catch (error) {
       console.log('error, algo fue mal', error)
     } finally {
       setIsLoading(false)
       setDeviceStatus(value)
     }
-
 
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
     // con el metodo subscirbe al channel, el codigo esta justo debajo comentado
