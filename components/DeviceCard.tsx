@@ -1,4 +1,3 @@
-'use client'
 
 import type { Device } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'

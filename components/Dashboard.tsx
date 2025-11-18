@@ -1,9 +1,3 @@
-
-import { Wifi, WifiOff, Zap, Activity, Search } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
-import { Input } from './ui/input'
-import { Badge } from './ui/badge'
-import { DeviceCard } from './DeviceCard'
 import { createClient } from '@/utils/supabase/server'
 import { DashboardClient } from './DashboardClient'
 

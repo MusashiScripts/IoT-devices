@@ -1,12 +1,13 @@
 'use client'
 
 import { Device } from '@/lib/types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge } from './ui/badge'
 import { DeviceCard } from './DeviceCard'
 import { Activity, Search, Wifi, WifiOff, Zap } from 'lucide-react'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { createClient } from '@/utils/supabase/client'
 
 interface Props {
   initialDevices: Device[] | null
@@ -15,6 +16,51 @@ interface Props {
 
 export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
+
+  const supabase = createClient()
+
+  useEffect(() => {
+
+    const channel = supabase.channel('devices-channel')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'devices' },
+        (payload) => {
+          //console.log('Change received!', payload)
+
+          const newDevice = payload.new as Device
+          const oldDevice = payload.old as Device
+
+          setDevices(prevState => {
+            if (!prevState) return prevState
+
+            switch (payload.eventType) {
+              case 'INSERT':
+                return [...prevState, newDevice]
+
+              case 'DELETE':
+                return prevState.filter(device => device.device_id !== oldDevice.device_id)
+
+              case 'UPDATE':
+                return prevState.map((device) =>
+                  device.device_id === newDevice.device_id
+                    ? { ...device, ...newDevice }
+                    : device
+                )
+
+              default:
+                return prevState
+            }
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+
+  }, [supabase])
 
   const onlineDevices = devices && devices?.filter(device => device.status === 'online').length
   const offlineDevices = devices && onlineDevices && devices.length - onlineDevices
