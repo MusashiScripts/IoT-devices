@@ -16,6 +16,7 @@ interface Props {
 
 export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const supabase = createClient()
 
@@ -81,15 +82,17 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const activeDevices = devicesOn?.length
 
 
-  /* const filteredDevices = mockDevices.filter(({ name, type, location }) =>
+  const filteredDevices = devices?.filter(({ name, type, location }) =>
     name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     type.toLowerCase().includes(searchTerm.toLowerCase()) ||
     location.toLowerCase().includes(searchTerm.toLowerCase())
-  ) */
+  )
 
 
   return (
     <main className='max-w-7xl mx-auto px-4px-4 sm:px-6 lg:px-8 py-8'>
+
+      {/* Stats */}
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
 
         <Card>
@@ -149,14 +152,14 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
           <Input
             placeholder="Buscar dispositivos..."
             className="pl-10"
-          /* value={searchTerm} 
-          onChange={(e) => setSearchTerm(e.target.value)} */
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
 
       {/* Devices Grid */}
-      {devices?.length === 0 ? (
+      {filteredDevices?.length === 0 ? (
         <div className='text-center py-8'>
           <WifiOff className='mx-auto size-12 text-muted-foreground mb-4' />
           <h3 className="text-lg font-medium text-muted-foreground mb-2">No se encontraron resultados</h3>
@@ -183,7 +186,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {devices?.map(device => (
+            {filteredDevices?.map(device => (
               <DeviceCard key={device.device_id} device={device} />
             ))}
           </div>
