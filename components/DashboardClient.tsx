@@ -1,7 +1,7 @@
 'use client'
 
 import { Device } from '@/lib/types'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Badge } from './ui/badge'
 import { DeviceCard } from './DeviceCard'
 import { Activity, Search, Wifi, WifiOff, Zap } from 'lucide-react'
@@ -18,7 +18,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
 
