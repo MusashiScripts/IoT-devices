@@ -57,9 +57,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
 
           //Solo en produccion hacer el refresh pq en local funciona como esperaba
           // No se la causa de este bug
-          if (process.env.NODE_ENV === 'production') {
-            router.refresh()
-          }
+          router.refresh()
 
         }
       )
