@@ -1,7 +1,7 @@
 import { Device, Schedule } from '@/lib/types'
 import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+//import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export const useDevice = (device: Device) => {
@@ -9,7 +9,7 @@ export const useDevice = (device: Device) => {
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  //const router = useRouter()
 
   const supabase = createClient()
 
@@ -62,10 +62,10 @@ export const useDevice = (device: Device) => {
     }
 
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
-    // con el metodo subscirbe al channel, el codigo esta justo debajo comentado
 
-    router.refresh()
+    //router.refresh()
 
+    //Ya esta en real-time, por eso router.refresh esta comentado
   }
 
   const createHandleDeleteSchedule = (scheduelId: string) => async () => {
