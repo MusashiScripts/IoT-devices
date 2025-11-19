@@ -1,7 +1,7 @@
 'use client'
 
 import { Device } from '@/lib/types'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Badge } from './ui/badge'
 import { DeviceCard } from './DeviceCard'
 import { Activity, Search, Wifi, WifiOff, Zap } from 'lucide-react'
@@ -18,7 +18,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
   const [searchTerm, setSearchTerm] = useState('')
 
-  const supabase = useMemo(() => createClient(), [])
+  const supabase = createClient()
 
   useEffect(() => {
 
@@ -56,13 +56,39 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
 
           //Solo en produccion hacer el refresh pq en local funciona como esperaba
           // No se la causa de este bug
-          /*  router.refresh() */
+          //router.refresh() 
 
           //No funciono
 
         }
       )
       .subscribe()
+
+    /* const channel = supabase.channel('devices-channel')
+
+    // 🔥 SOLO INSERT
+    channel.on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'devices' },
+      (payload) => {
+        const newDevice = payload.new as Device
+        setDevices(prev => prev ? [...prev, newDevice] : prev)
+      }
+    )
+
+    // 🔥 SOLO DELETE
+    channel.on(
+      'postgres_changes',
+      { event: 'DELETE', schema: 'public', table: 'devices' },
+      (payload) => {
+        const oldDevice = payload.old as Device
+        setDevices(prev => prev?.filter(device => device.device_id !== oldDevice.device_id) ?? prev)
+      }
+    )
+
+    channel.subscribe() */
+
+    //Creo q la solucion es no escuhcar el update pq este esta siendo modificado en la Device Card
 
     return () => {
       supabase.removeChannel(channel)
