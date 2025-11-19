@@ -14,7 +14,7 @@ export const GoogleSignInButton = ({ children }: { children: React.ReactNode }) 
         options: {
           redirectTo: process.env.NODE_ENV === 'production'
             ? 'https://iot-devices-three.vercel.app/auth/callback'
-            : 'http//:localhost:3000/auth/callback'
+            : 'http://localhost:3000/auth/callback'
         }
       })
     } catch (error) {
