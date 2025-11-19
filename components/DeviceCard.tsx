@@ -1,4 +1,3 @@
-
 import type { Device } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
 import { Clock, Power, Settings, Trash, Zap } from 'lucide-react'

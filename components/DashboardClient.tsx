@@ -8,6 +8,7 @@ import { Activity, Search, Wifi, WifiOff, Zap } from 'lucide-react'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   initialDevices: Device[] | null
@@ -16,6 +17,7 @@ interface Props {
 
 export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
+  const router = useRouter()
 
   const supabase = createClient()
 
@@ -52,6 +54,13 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
                 return prevState
             }
           })
+
+          //Solo en produccion hacer el refresh pq en local funciona como esperaba
+          // No se la causa de este bug
+          if (process.env.NODE_ENV === 'production') {
+            router.refresh()
+          }
+
         }
       )
       .subscribe()
@@ -60,7 +69,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       supabase.removeChannel(channel)
     }
 
-  }, [supabase])
+  }, [supabase, router])
 
   const onlineDevices = devices && devices?.filter(device => device.status === 'online').length
   const offlineDevices = devices && onlineDevices && devices.length - onlineDevices
