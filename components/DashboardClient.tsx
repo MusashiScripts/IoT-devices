@@ -22,7 +22,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
 
   useEffect(() => {
 
-    const channel = supabase.channel('devices-channel')
+    /* const channel = supabase.channel('devices-channel')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'devices' },
@@ -52,19 +52,19 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
               default:
                 return prevState
             }
-          })
+          }) */
 
-          //Solo en produccion hacer el refresh pq en local funciona como esperaba
-          // No se la causa de este bug
-          //router.refresh()
+    //Solo en produccion hacer el refresh pq en local funciona como esperaba
+    // No se la causa de este bug
+    //router.refresh()
 
-          //No funciono
+    //No funciono
 
-        }
+    /*     }
       )
-      .subscribe()
+      .subscribe() */
 
-    /* const channel = supabase.channel('devices-channel')
+    const channel = supabase.channel('devices-channel')
 
     // 🔥 SOLO INSERT
     channel.on(
@@ -86,7 +86,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       }
     )
 
-    channel.subscribe() */
+    channel.subscribe()
 
     //Creo q la solucion es no escuhcar el update pq este esta siendo modificado en la Device Card
 
