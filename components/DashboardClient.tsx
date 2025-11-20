@@ -8,6 +8,7 @@ import { Activity, Search, Wifi, WifiOff, Zap } from 'lucide-react'
 import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface Props {
   initialDevices: Device[] | null
@@ -17,6 +18,7 @@ interface Props {
 export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
   const [devices, setDevices] = useState(initialDevices)
   const [searchTerm, setSearchTerm] = useState('')
+  const router = useRouter()
 
   const supabase = createClient()
 
@@ -73,6 +75,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       (payload) => {
         const newDevice = payload.new as Device
         setDevices(prev => prev ? [...prev, newDevice] : prev)
+        router.refresh()
       }
     )
 
@@ -94,7 +97,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       supabase.removeChannel(channel)
     }
 
-  }, [supabase])
+  }, [supabase, router])
 
   const handleDeviceToggle = async (deviceId: string, value: boolean) => {
     //Perfecto, solo falta q sea en tiempo real
