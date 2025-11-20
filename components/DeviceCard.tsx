@@ -10,11 +10,12 @@ import { useDevice } from '@/hooks/useDevice'
 
 interface DeviceCardProps {
   device: Device
+  onToggle: (deviceId: string, value: boolean) => Promise<void>
   /* onSchedule: (deviceId: string, schedule: Device['schedule']) => void */
 }
 
-export function DeviceCard({ device }: DeviceCardProps) {
-  const { deviceStatus, deviceSchedules, isLoading, isScheduleOpen, setIsScheduleOpen, getDeviceVariant, handleDeviceToggle, handleOpenChange, createHandleDeleteSchedule, addNewSchedule } = useDevice(device)
+export function DeviceCard({ device, onToggle }: DeviceCardProps) {
+  const { deviceSchedules, isLoading, isScheduleOpen, setIsScheduleOpen, getDeviceVariant, handleToggle, handleOpenChange, createHandleDeleteSchedule, addNewSchedule } = useDevice(device, onToggle)
 
   const getDeviceIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -64,12 +65,12 @@ export function DeviceCard({ device }: DeviceCardProps) {
         <div className='flex justify-between items-center'>
           <span className='text-sm'>Estado:</span>
           <div className='flex items-center gap-2'>
-            <span className='text-sm text-muted-foreground'>{deviceStatus ? 'Encendido' : 'Apagado'}</span>
+            <span className='text-sm text-muted-foreground'>{device.isOn ? 'Encendido' : 'Apagado'}</span>
             <Switch
               className='cursor-pointer'
-              checked={deviceStatus}
+              checked={device.isOn}
               disabled={device.status === 'offline' || isLoading}
-              onCheckedChange={(value) => handleDeviceToggle(device.device_id, value)}
+              onCheckedChange={(value) => handleToggle(device.device_id, value)}
             />
           </div>
         </div>

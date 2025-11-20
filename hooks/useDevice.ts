@@ -1,17 +1,15 @@
 import { Device, Schedule } from '@/lib/types'
 import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
-import { createClient } from '@/utils/supabase/client'
 //import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export const useDevice = (device: Device) => {
-  const [deviceStatus, setDeviceStatus] = useState(device.isOn)
+
+export const useDevice = (device: Device, onToggle: (deviceId: string, value: boolean) => Promise<void>) => {
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   //const router = useRouter()
 
-  const supabase = createClient()
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -32,33 +30,15 @@ export const useDevice = (device: Device) => {
     setIsScheduleOpen(value)
   }
 
-  const handleDeviceToggle = async (deviceId: string, value: boolean) => {
+  const handleToggle = async (deviceId: string, value: boolean) => {
     //Perfecto, solo falta q sea en tiempo real
     setIsLoading(true)
     try {
-      const now = new Date()
-      const date = new Intl.DateTimeFormat('en-CA').format(now)
-      //console.log(date) --> "2025-11-13"
-
-      const { data, error } = await supabase
-        .from('devices')
-        .update({ isOn: !device.isOn, lastUpdated: date })
-        .eq('device_id', deviceId)
-
-      if (data) {
-        //console.log(data)
-        //setDeviceStatus(value)
-      }
-
-      if (error) {
-        console.log(error)
-      }
-
+      await onToggle(deviceId, value)
     } catch (error) {
       console.log('error, algo fue mal', error)
     } finally {
       setIsLoading(false)
-      setDeviceStatus(value)
     }
 
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
@@ -85,5 +65,5 @@ export const useDevice = (device: Device) => {
     setDeviceSchedules([...deviceSchedules, schedule])
   }
 
-  return { deviceStatus, deviceSchedules, isLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleDeviceToggle, createHandleDeleteSchedule, addNewSchedule }
+  return { deviceSchedules, isLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleToggle, createHandleDeleteSchedule, addNewSchedule }
 }

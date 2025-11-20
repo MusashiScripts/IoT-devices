@@ -96,6 +96,52 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
 
   }, [supabase])
 
+  const handleDeviceToggle = async (deviceId: string, value: boolean) => {
+    //Perfecto, solo falta q sea en tiempo real
+    try {
+      const now = new Date()
+      const date = new Intl.DateTimeFormat('en-CA').format(now)
+      //console.log(date) --> "2025-11-13"
+
+      const device = devices?.find(device => device.device_id === deviceId)
+
+      if (!device) return
+
+      const { data, error } = await supabase
+        .from('devices')
+        .update({ isOn: !device.isOn, lastUpdated: date })
+        .eq('device_id', deviceId)
+
+      if (data) {
+        //console.log(data)
+        const newDevices = devices?.map(device =>
+          device.device_id === deviceId
+            ? { ...device, isOn: !device.isOn, lastUpdated: date }
+            : device
+        )
+
+        if (newDevices) {
+          return setDevices(newDevices)
+        }
+
+      }
+
+      if (error) {
+        console.log(error)
+      }
+
+    } catch (error) {
+      console.log('error, algo fue mal', error)
+    }
+
+    //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
+
+    //router.refresh()
+
+    //Ya esta en real-time, por eso router.refresh esta comentado
+  }
+
+
   const onlineDevices = devices && devices?.filter(device => device.status === 'online').length
   const offlineDevices = devices && onlineDevices && devices.length - onlineDevices
 
@@ -213,7 +259,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
             {filteredDevices?.map(device => (
-              <DeviceCard key={device.device_id} device={device} />
+              <DeviceCard key={device.device_id} device={device} onToggle={handleDeviceToggle} />
             ))}
           </div>
         </div>
