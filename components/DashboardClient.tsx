@@ -111,9 +111,11 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
         .from('devices')
         .update({ isOn: !device.isOn, lastUpdated: date })
         .eq('device_id', deviceId)
+        .select()
+
+      //console.log({ data, error })
 
       if (data) {
-        //console.log(data)
         const newDevices = devices?.map(device =>
           device.device_id === deviceId
             ? { ...device, isOn: !device.isOn, lastUpdated: date }
