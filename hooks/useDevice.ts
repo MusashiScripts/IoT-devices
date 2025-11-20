@@ -1,6 +1,6 @@
 import { Device, Schedule } from '@/lib/types'
 import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
-//import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 
@@ -8,7 +8,7 @@ export const useDevice = (device: Device, onToggle: (deviceId: string, value: bo
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  //const router = useRouter()
+  const router = useRouter()
 
 
   useEffect(() => {
@@ -39,6 +39,7 @@ export const useDevice = (device: Device, onToggle: (deviceId: string, value: bo
       console.log('error, algo fue mal', error)
     } finally {
       setIsLoading(false)
+      router.refresh()
     }
 
     //Por ahora un refresh para q se vean los cambios pero mejor usar el real-time
