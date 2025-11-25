@@ -161,6 +161,6 @@ export const useDashboard = ({ initialDevices }: Params) => {
     location.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  return { devices, searchTerm, handleChange, setSearchTerm, handleDeviceToggle, onlineDevices, offlineDevices, totalPowerConsumption, activeDevices, filteredDevices }
+  return { devices, searchTerm, handleChange, handleDeviceToggle, onlineDevices, offlineDevices, totalPowerConsumption, activeDevices, filteredDevices }
 
 }

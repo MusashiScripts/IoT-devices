@@ -5,6 +5,7 @@ import { DeviceGrid } from './DevicesGrid'
 import { Stats } from './Stats'
 import { useDashboard } from '@/hooks/useDashboard'
 import { Searching } from './Searching'
+import { NoDevices } from './NoDevices'
 
 interface Props {
   initialDevices: Device[] | null
@@ -34,7 +35,11 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       <Searching searchTerm={searchTerm} handleChange={handleChange} />
 
       {/* Devices Grid */}
-      <DeviceGrid filteredDevices={filteredDevices} totalDevices={devices?.length} onlineDevices={onlineDevices} offlineDevices={offlineDevices} handleDeviceToggle={handleDeviceToggle} />
+      {devices && devices.length > 0
+        ? <DeviceGrid filteredDevices={filteredDevices} totalDevices={devices?.length} onlineDevices={onlineDevices} offlineDevices={offlineDevices} handleDeviceToggle={handleDeviceToggle} />
+        : <NoDevices />
+      }
+
 
     </main>
   )
