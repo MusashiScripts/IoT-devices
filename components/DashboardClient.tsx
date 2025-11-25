@@ -9,6 +9,8 @@ import { Input } from './ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { DeviceGrid } from './DevicesGrid'
+import { Stats } from './Stats'
 
 interface Props {
   initialDevices: Device[] | null
@@ -170,57 +172,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
     <main className='max-w-7xl mx-auto px-4px-4 sm:px-6 lg:px-8 py-8'>
 
       {/* Stats */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
-
-        <Card>
-          <CardHeader className='flex items-center justify-between pb-2'>
-            <CardTitle className='text-sm font-medium'>Dispositivos Conectados</CardTitle>
-            <Wifi className='size-4 text-muted-foreground' />
-          </CardHeader>
-
-          <CardContent>
-            <h2 className='text-2xl font-bold'>{onlineDevices}</h2>
-            <p className='text-xs text-muted-foreground'>de {devices?.length} dispositivos</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className='flex items-center justify-between pb-2'>
-            <CardTitle className='text-sm font-medium'>Dispositivos Activos</CardTitle>
-            <Activity className='size-4 text-muted-foreground' />
-          </CardHeader>
-
-          <CardContent>
-            <h2 className='text-2xl font-bold'>{activeDevices}</h2>
-            <p className='text-xs text-muted-foreground'>encendidos ahora</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className='flex items-center justify-between pb-2'>
-            <CardTitle className='text-sm font-medium'>Consumo total</CardTitle>
-            <Zap className='size-4 text-muted-foreground' />
-          </CardHeader>
-
-          <CardContent>
-            <h2 className='text-2xl font-bold'>{totalPowerConsumption}W</h2>
-            <p className='text-xs text-muted-foreground'>consumo actual</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className='flex items-center justify-between pb-2'>
-            <CardTitle className='text-sm font-medium'>Programados</CardTitle>
-            <WifiOff className='size-4 text-muted-foreground' />
-          </CardHeader>
-
-          <CardContent>
-            <h2 className='text-2xl font-bold'>{schedulesCount}</h2>
-            <p className='text-xs text-muted-foreground'>con horarios activos</p>
-          </CardContent>
-        </Card>
-
-      </div>
+      <Stats onlineDevices={onlineDevices} totalDevices={devices?.length} activeDevices={activeDevices} totalPowerConsumption={totalPowerConsumption} schedulesCount={schedulesCount} />
 
       {/* Search */}
       <div className="mb-6">
@@ -236,39 +188,7 @@ export const DashboardClient = ({ initialDevices, schedulesCount }: Props) => {
       </div>
 
       {/* Devices Grid */}
-      {filteredDevices?.length === 0 ? (
-        <div className='text-center py-8'>
-          <WifiOff className='mx-auto size-12 text-muted-foreground mb-4' />
-          <h3 className="text-lg font-medium text-muted-foreground mb-2">No se encontraron resultados</h3>
-          <p className="text-muted-foreground">
-            Intenta con otro término de búsqueda
-          </p>
-        </div>
-      ) : (
-        <div>
-
-          <div className='flex justify-between items-center mb-4'>
-            <h2 className='text-lg font-semibold'>Dispositivos ({devices?.length})</h2>
-
-            <div className='flex items-center gap-2'>
-              <Badge variant='outline' >
-                <div className='size-2 rounded-full bg-green-500 mr-2' />
-                {onlineDevices} En línea
-              </Badge>
-              <Badge variant='outline' >
-                <div className='size-2 rounded-full bg-red-500 mr-2' />
-                {offlineDevices} Desconectados
-              </Badge>
-            </div>
-          </div>
-
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {filteredDevices?.map(device => (
-              <DeviceCard key={device.device_id} device={device} onToggle={handleDeviceToggle} />
-            ))}
-          </div>
-        </div>
-      )}
+      <DeviceGrid filteredDevices={filteredDevices} totalDevices={devices?.length} onlineDevices={onlineDevices} offlineDevices={offlineDevices} handleDeviceToggle={handleDeviceToggle} />
 
     </main>
   )
