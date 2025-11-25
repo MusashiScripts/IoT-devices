@@ -63,14 +63,12 @@ export const useDashboard = ({ initialDevices }: Params) => {
       { event: '*', schema: 'public', table: 'devices' },
       (payload) => {
         if (payload.eventType === 'INSERT') {
-          console.log('esta entrando al insert', payload)
           const newDevice = payload.new as Device
           setDevices(prev => prev ? [...prev, newDevice] : prev)
           //router.refresh()
         }
 
         if (payload.eventType === 'DELETE') {
-          console.log('esta entrando al delete', payload)
           const oldDevice = payload.old as Device
           setDevices(prev => prev?.filter(device => device.device_id !== oldDevice.device_id) ?? prev)
         }
