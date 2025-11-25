@@ -59,9 +59,26 @@ export const useDashboard = ({ initialDevices }: Params) => {
       .subscribe() */
 
     const channel = supabase.channel('devices-channel')
+    channel.on('postgres_changes',
+      { event: '*', schema: 'public', table: 'devices' },
+      (payload) => {
+        if (payload.eventType === 'INSERT') {
+          console.log('esta entrando al insert', payload)
+          const newDevice = payload.new as Device
+          setDevices(prev => prev ? [...prev, newDevice] : prev)
+          //router.refresh()
+        }
+
+        if (payload.eventType === 'DELETE') {
+          console.log('esta entrando al delete', payload)
+          const oldDevice = payload.old as Device
+          setDevices(prev => prev?.filter(device => device.device_id !== oldDevice.device_id) ?? prev)
+        }
+      }
+    ).subscribe()
 
     // 🔥 SOLO INSERT
-    channel.on(
+    /* channel.on(
       'postgres_changes',
       { event: 'INSERT', schema: 'public', table: 'devices' },
       (payload) => {
@@ -69,19 +86,19 @@ export const useDashboard = ({ initialDevices }: Params) => {
         setDevices(prev => prev ? [...prev, newDevice] : prev)
         router.refresh()
       }
-    )
+    ) */
 
     // 🔥 SOLO DELETE
-    channel.on(
+    /* channel.on(
       'postgres_changes',
       { event: 'DELETE', schema: 'public', table: 'devices' },
       (payload) => {
         const oldDevice = payload.old as Device
         setDevices(prev => prev?.filter(device => device.device_id !== oldDevice.device_id) ?? prev)
       }
-    )
+    ) */
 
-    channel.subscribe()
+    //channel.subscribe()
 
     //Creo q la solucion es no escuhcar el update pq este esta siendo modificado en la Device Card
 
