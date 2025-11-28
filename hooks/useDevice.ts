@@ -1,18 +1,26 @@
 import { Device, Schedule } from '@/lib/types'
 import { deleteScheduleById, getDeviceSchedule } from '@/services/schedules'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 
 export const useDevice = (device: Device, onToggle: (deviceId: string, value: boolean) => Promise<void>) => {
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const isFirstLoading = useRef(true)
 
 
   useEffect(() => {
     const fetchSchedule = async () => {
-      const schedule = await getDeviceSchedule(device.device_id)
-      setDeviceSchedules(schedule)
+      try {
+        const schedule = await getDeviceSchedule(device.device_id)
+        setDeviceSchedules(schedule)
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsLoading(false)
+        isFirstLoading.current = false
+      }
     }
 
     fetchSchedule()
@@ -61,5 +69,5 @@ export const useDevice = (device: Device, onToggle: (deviceId: string, value: bo
     setDeviceSchedules([...deviceSchedules, schedule])
   }
 
-  return { deviceSchedules, isLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleToggle, createHandleDeleteSchedule, addNewSchedule }
+  return { deviceSchedules, isLoading, isFirstLoading, getDeviceVariant, isScheduleOpen, setIsScheduleOpen, handleOpenChange, handleToggle, createHandleDeleteSchedule, addNewSchedule }
 }
