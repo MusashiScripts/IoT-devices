@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 export const useDevice = (device: Device, onToggle: (deviceId: string, value: boolean) => Promise<void>) => {
   const [deviceSchedules, setDeviceSchedules] = useState<Schedule[]>([])
   const [isScheduleOpen, setIsScheduleOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const isFirstLoading = useRef(true)
 
 
@@ -18,7 +18,6 @@ export const useDevice = (device: Device, onToggle: (deviceId: string, value: bo
       } catch (error) {
         console.error(error)
       } finally {
-        setIsLoading(false)
         isFirstLoading.current = false
       }
     }

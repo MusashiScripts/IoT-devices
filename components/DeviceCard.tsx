@@ -1,6 +1,6 @@
 import type { Device } from '@/lib/types'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card'
-import { Clock, Power, Settings, Trash, Zap } from 'lucide-react'
+import { Clock, Power, Settings, Zap } from 'lucide-react'
 import { Badge } from './ui/badge'
 import { Switch } from './ui/switch'
 import { Button } from './ui/button'
@@ -29,18 +29,6 @@ export function DeviceCard({ device, onToggle }: DeviceCardProps) {
         return <Power className="h-5 w-5" />
     }
   }
-
-
-
-  /* const devices = supabase.channel('custom-update-channel')
-    .on(
-      'postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'devices' },
-      (payload) => {
-        console.log('Change received!', payload)
-      }
-    )
-    .subscribe() */
 
   return (
     <Card className='hover:shadow-md transition-shadow'>
@@ -95,36 +83,14 @@ export function DeviceCard({ device, onToggle }: DeviceCardProps) {
         </div>
 
         {/* Renederizado de las programaciones */}
-        {!isFirstLoading.current && deviceSchedules && deviceSchedules.length > 0
-          ? <SchedulesList deviceSchedules={deviceSchedules} createHandleDeleteSchedule={createHandleDeleteSchedule} isLoading={isLoading} />
-          : <NoSchedules />
+        {isFirstLoading.current
+          ? <Spinner className='mx-auto w-full' />
+          : deviceSchedules && deviceSchedules.length > 0
+            ? <SchedulesList deviceSchedules={deviceSchedules} createHandleDeleteSchedule={createHandleDeleteSchedule} isLoading={isLoading} />
+            : <NoSchedules />
         }
 
         {isLoading && <Spinner className='mx-auto w-full' />}
-
-        {/* Funciona pero cada vez q enciendo o apago me renderiza el spinner y me quita la lista */}
-        {/* {isLoading
-          ? <Spinner className='mx-auto w-full' />
-          : deviceSchedules && deviceSchedules.length > 0 ?
-            deviceSchedules.map(schedule => (
-              <div key={schedule.schedule_id} className='bg-blue-50 text-xs text-blue-700 px-2 py-0.5 rounded-md flex items-center justify-between'>
-                <div className='flex items-center gap-1'>
-                  <Clock className='size-3' />
-                  <span>Programado: {schedule.action} a las {schedule.time}</span>
-                </div>
-                <Button variant='link' size='icon' className='cursor-pointer text-blue-700 p-0 hover:text-red-500 transition-colors'
-                  onClick={createHandleDeleteSchedule(schedule.schedule_id)} disabled={isLoading}>
-                  <Trash />
-                </Button>
-              </div>
-            )) : (
-              <div className='flex items-center justify-center'>
-                <Badge className='bg-slate-700'>
-                  Sin programaciones
-                </Badge>
-              </div>
-            )
-        } */}
 
       </CardContent>
 
