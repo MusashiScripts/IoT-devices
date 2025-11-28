@@ -1,6 +1,6 @@
 'use client'
 
-import { Eye, EyeClosed, MailX, TriangleAlert, Wifi } from 'lucide-react'
+import { Eye, EyeClosed, MailX, TriangleAlert } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
@@ -8,6 +8,8 @@ import { Input } from './ui/input'
 import Link from 'next/link'
 import { GoogleSignInButton } from './GoogleSignInButton'
 import { useLogin } from '@/hooks/useLogin'
+import Image from 'next/image'
+import { SmallLogoBlackImg } from '@/lib/constants'
 
 export function LoginForm() {
   const { clientError, serverError, handleSubmit, isLoading, showPassword, toggleShowPassword } = useLogin()
@@ -15,8 +17,8 @@ export function LoginForm() {
   return (
     <Card className="w-full max-w-md bg-white border-none">
       <CardHeader className='text-center'>
-        <div className='flex justify-center items-center size-12 rounded-full bg-blue-100 mx-auto mb-4'>
-          <Wifi className='text-blue-600' />
+        <div className='flex justify-center items-center rounded-full mx-auto mb-4'>
+          <Image src={SmallLogoBlackImg} alt='logo' height={50} width={50} className='rounded-full' priority />
         </div>
         <CardTitle>Sistema de IoT Control</CardTitle>
         <CardDescription>Inicia sesion para acceder al panel de control</CardDescription>

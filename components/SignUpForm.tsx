@@ -1,6 +1,6 @@
 'use client'
 
-import { Eye, EyeClosed, MailX, TriangleAlert, Wifi } from 'lucide-react'
+import { Eye, EyeClosed, MailX, TriangleAlert } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
@@ -8,6 +8,8 @@ import { Input } from './ui/input'
 import Link from 'next/link'
 import { GoogleSignInButton } from './GoogleSignInButton'
 import { useSignUp } from '@/hooks/useSignUp'
+import { SmallLogoBlackImg, SmallLogoImg } from '@/lib/constants'
+import Image from 'next/image'
 
 export function SignUpForm() {
   const { clientError, serverError, isLoading, handleSubmit, showPassword, toggleShowPassword } = useSignUp()
@@ -15,8 +17,8 @@ export function SignUpForm() {
   return (
     <Card className="w-full max-w-md bg-white border-none">
       <CardHeader className='text-center'>
-        <div className='flex justify-center items-center size-12 rounded-full bg-blue-100 mx-auto mb-4'>
-          <Wifi className='text-blue-600' />
+        <div className='flex justify-center items-center rounded-full mx-auto mb-4'>
+          <Image src={SmallLogoBlackImg} alt='logo' height={50} width={50} className='rounded-full' priority />
         </div>
         <CardTitle>Sistema de IoT Control</CardTitle>
         <CardDescription>Create una cuenta para acceder al panel de control</CardDescription>
@@ -26,7 +28,7 @@ export function SignUpForm() {
         <form className='space-y-6' onSubmit={handleSubmit}>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
-            <Input id='email' name='email' placeholder='mail@example.com' type='email'
+            <Input id='email' name='email' placeholder='email@example.com' type='email'
               className='border-none bg-gray-100 ring-gray-400'
             />
             {clientError.email && <div className='text-red-500 flex justify-center items-center gap-2 mt-2'>

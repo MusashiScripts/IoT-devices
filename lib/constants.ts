@@ -1,4 +1,7 @@
-import Logo from '@/public/logo-big.jpg'
+import Logo from '@/public/logo.jpg'
+import SmallLogo from '@/public/logo-small.jpg'
+import LogoBlack from '@/public/logo-black.jpg'
+import SmallLogoBlack from '@/public/logo-small-black.jpg'
 //import type { Device } from './types.d.ts'
 
 /* export const mockDevices: Device[] = [
@@ -81,3 +84,6 @@ export const daysOfWeek = [
 ]
 
 export const LogoImg = Logo
+export const SmallLogoImg = SmallLogo
+export const LogoBlackImg = LogoBlack
+export const SmallLogoBlackImg = SmallLogoBlack
