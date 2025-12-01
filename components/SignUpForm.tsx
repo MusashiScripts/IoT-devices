@@ -21,11 +21,11 @@ export function SignUpForm() {
           <Image src={SmallLogoBlackImg} alt='logo' height={50} width={50} className='rounded-full' priority />
         </div>
         <CardTitle>Sistema de IoT Control</CardTitle>
-        <CardDescription>Create una cuenta para acceder al panel de control</CardDescription>
+        <CardDescription>Créate una cuenta para acceder al panel de control</CardDescription>
       </CardHeader>
 
       <CardContent className='space-y-2'>
-        <form className='space-y-6' onSubmit={handleSubmit}>
+        {/* <form className='space-y-6' onSubmit={handleSubmit}>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
             <Input id='email' name='email' placeholder='email@example.com' type='email'
@@ -71,15 +71,15 @@ export function SignUpForm() {
               {isLoading ? 'Creando Cuenta...' : 'Crear Cuenta'}
             </Button>
 
-            <span className='text-xs font-semibold'>O</span>
+            <span className='text-xs font-semibold'>O</span> */}
 
-            <GoogleSignInButton>
-              Continuar con Google
-            </GoogleSignInButton>
-          </div>
+        <GoogleSignInButton>
+          Continuar con Google
+        </GoogleSignInButton>
+        {/*   </div> */}
 
 
-        </form>
+        {/*   </form> */}
 
         <div className='flex justify-center items-center gap-1 text-sm'>
           <span>Ya tienes cuenta?</span>

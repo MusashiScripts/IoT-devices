@@ -21,11 +21,11 @@ export function LoginForm() {
           <Image src={SmallLogoBlackImg} alt='logo' height={50} width={50} className='rounded-full' priority />
         </div>
         <CardTitle>Sistema de IoT Control</CardTitle>
-        <CardDescription>Inicia sesion para acceder al panel de control</CardDescription>
+        <CardDescription>Inicia sesión para acceder al panel de control</CardDescription>
       </CardHeader>
 
       <CardContent className='space-y-2'>
-        <form className='space-y-6' onSubmit={handleSubmit}>
+        {/* <form className='space-y-6' onSubmit={handleSubmit}>
           <div className='space-y-2'>
             <Label htmlFor='email'>Email</Label>
             <Input id='email' name='email' placeholder='email@example.com' type='email'
@@ -72,19 +72,19 @@ export function LoginForm() {
               disabled={isLoading}
               className={`bg-black text-white w-full ${!isLoading && 'cursor-pointer'}`}>
               {isLoading ? 'Iniciando Sesion...' : 'Inciar Sesion'}
-            </Button>
-            <span className='text-xs font-semibold'>O</span>
-            <GoogleSignInButton>
-              Iniciar sesión con Google
-            </GoogleSignInButton>
-          </div>
+            </Button> */}
+        {/*  <span className='text-xs font-semibold'>O</span> */}
+        <GoogleSignInButton>
+          Iniciar sesión con Google
+        </GoogleSignInButton>
+        {/* </div> */}
 
 
-        </form>
+        {/* </form> */}
 
         <div className='flex justify-center items-center gap-1 text-sm'>
           <span>No tienes cuenta?</span>
-          <Link href='/sign-up' className='underline underline-offset-4 hover:text-blue-500 transition-colors'>Create una</Link>
+          <Link href='/sign-up' className='underline underline-offset-4 hover:text-blue-500 transition-colors'>Créate una</Link>
         </div>
 
       </CardContent>
